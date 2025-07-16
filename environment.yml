@@ -1,0 +1,16 @@
+name: enterprise-ai
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - jupyterlab
+  - openai
+  - tiktoken
+  - python-dotenv
+  - langchain
+  - langchain-community
+  - langchain-openai
+  - pip
+  - pip:
+      - crewai
