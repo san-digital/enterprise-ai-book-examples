@@ -1,0 +1,245 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.app-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.right-chat-section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 480px;
+  min-height: 500px;
+  gap: 1.5rem;
+}
+
+.chat-window {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 480px;
+  min-height: 500px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+}
+
+.chat-window h2, .chat-table-window h2 {
+  color: #222266;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.chat-messages {
+  flex: 1;
+  min-height: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 1rem;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.chat-message {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background: #e3e3ff;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #222;
+}
+
+.chat-message-grey {
+  background: #e0e0e0 !important;
+  color: #555 !important;
+}
+
+.chat-sender {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.chat-sender.left {
+  background: #d1eaff;
+  color: #1766a3;
+  border: 1px solid #b3d6f2;
+}
+.chat-sender.right {
+  background: #ffe3d1;
+  color: #a35c17;
+  border: 1px solid #f2c6b3;
+}
+
+.chat-sender-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 0.2rem;
+}
+
+.chat-sender-header {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.chat-window input[type="text"] {
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  background: #f5f5ff;
+  color: #222;
+}
+
+.chat-window button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  background: #646cff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.chat-window button:hover {
+  background: #4b4be7;
+}
+
+.chat-table-window {
+  background: #fafafa;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.chat-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.chat-table th, .chat-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+  color: #222;
+  background: #f5f5ff;
+  font-size: 1.1rem;
+}
+
+.chat-table th {
+  background: #e3e3ff;
+  font-weight: 700;
+}
+
+.active-chat-row {
+  background: #d1d1ff;
+}
+
+.chat-table tr:hover {
+  background: #f0f0ff;
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  background: #222266;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+.back-btn:hover {
+  background: #444488;
+}
+
+.new-chat-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  background: #228866;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+.new-chat-btn:hover {
+  background: #116644;
+}
+
+.chat-time-label {
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: 500;
+  margin-left: 1rem;
+  white-space: nowrap;
+}
+
+.new-message-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #ff3b3b;
+  border-radius: 50%;
+  margin-left: 8px;
+  vertical-align: middle;
+}
