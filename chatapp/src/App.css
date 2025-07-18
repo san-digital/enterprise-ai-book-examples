@@ -238,8 +238,10 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  background: #ff3b3b;
   border-radius: 50%;
   margin-left: 8px;
   vertical-align: middle;
+  background: #44cc44; /* default green */
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 2px #888;
 }

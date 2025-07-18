@@ -13,6 +13,7 @@ interface Chat {
   name: string;
   messages: Message[];
   hasNewLeftMessage?: boolean;
+  bot_allowed?: boolean; // add this property for AI state
 }
 
 interface ChatWindowProps {
@@ -26,6 +27,8 @@ interface ChatWindowProps {
   showNewChat?: boolean;
   onNewChat?: () => void;
   side: "left" | "right";
+  aiEnabled?: boolean;
+  toggleAi?: () => void;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -39,6 +42,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   showNewChat,
   onNewChat,
   side,
+  aiEnabled,
+  toggleAi,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -72,6 +77,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           </button>
         )}
       </div>
+      {/* Toolbar for right chat window */}
+      {side === "right" && (
+        <div
+          className="chat-toolbar"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "0.5rem",
+            gap: "1rem",
+          }}
+        >
+          <span>
+            AI:{" "}
+            <b style={{ color: aiEnabled ? "green" : "red" }}>
+              {aiEnabled ? "On" : "Off"}
+            </b>
+          </span>
+          <button onClick={toggleAi} style={{ padding: "0.3rem 0.8rem" }}>
+            {aiEnabled ? "Disable AI" : "Enable AI"}
+          </button>
+        </div>
+      )}
       <div className="chat-messages">
         {messages.map((msg, idx) => {
           if (msg.source === "meta") {
@@ -126,20 +153,27 @@ const ChatTable: React.FC<ChatTableProps> = ({ chats, onSelectChat }) => (
         </tr>
       </thead>
       <tbody>
-        {chats.map((chat) => (
-          <tr
-            key={chat.id}
-            onClick={() => onSelectChat(chat.id)}
-            style={{ cursor: "pointer" }}
-          >
-            <td style={{ position: "relative" }}>
-              {chat.name}
-              {chat.hasNewLeftMessage && (
-                <span className="new-message-dot"></span>
-              )}
-            </td>
-          </tr>
-        ))}
+        {chats.map((chat) => {
+          // Dot color logic
+          let dotColor = "#44cc44"; // green by default (no new message)
+          if (chat.hasNewLeftMessage) dotColor = "#ff3b3b"; // red if new message
+          if (chat.bot_allowed === true) dotColor = "#2286ff"; // blue if AI enabled
+          return (
+            <tr
+              key={chat.id}
+              onClick={() => onSelectChat(chat.id)}
+              style={{ cursor: "pointer" }}
+            >
+              <td style={{ position: "relative" }}>
+                {chat.name}
+                <span
+                  className="new-message-dot"
+                  style={{ background: dotColor }}
+                ></span>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   </div>
@@ -165,11 +199,30 @@ const App: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(async () => {
       for (const chat of chats) {
-        await fetchMessages(chat.id, setChats);
+        fetchMessages(chat.id, setChats);
+        fetchAiEnabled(chat.id);
       }
     }, 5000);
     return () => clearInterval(interval);
   }, [chats]);
+
+  const fetchAiEnabled = async (chatId: string) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/chats/${chatId}/ai`);
+      if (res.ok) {
+        const data = await res.json();
+        setChats((prev) =>
+          prev.map((chat) =>
+            chat.id === chatId
+              ? { ...chat, bot_allowed: data.bot_allowed }
+              : chat
+          )
+        );
+      }
+    } catch (e) {
+      // Optionally handle error
+    }
+  };
 
   // Fetch messages for selected chat
   const fetchMessages = async (
@@ -213,6 +266,32 @@ const App: React.FC = () => {
   const handleBack = () => {
     setRightChatId(null);
     setRightInput("");
+  };
+
+  // Toggle AI state for right chat
+  const toggleAi = async () => {
+    if (!rightChatId) return;
+    const chat = chats.find((c) => c.id === rightChatId);
+    const newEnabled = !chat?.bot_allowed;
+    try {
+      const res = await fetch(`${BACKEND_URL}/chats/${rightChatId}/ai`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: newEnabled }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setChats((prev) =>
+          prev.map((chat) =>
+            chat.id === rightChatId
+              ? { ...chat, bot_allowed: data.bot_allowed }
+              : chat
+          )
+        );
+      }
+    } catch (e) {
+      // Optionally handle error
+    }
   };
 
   // Send message from left window
@@ -296,6 +375,8 @@ const App: React.FC = () => {
             showBack={true}
             onBack={handleBack}
             side="right"
+            aiEnabled={rightChat?.bot_allowed}
+            toggleAi={toggleAi}
           />
         )}
       </div>

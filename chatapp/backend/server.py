@@ -9,7 +9,6 @@ from pydantic import BaseModel, Field
 from typing import Type
 
 
-
 app = Flask(__name__)
 CORS(app)
 
@@ -122,6 +121,7 @@ def send_message(chat_id):
     # Respond asynchronously: return immediately, trigger bot reply in background
 
     def bot_reply(chat):
+        print("Classifying...")
         classification_task = Task(
            description=f"""
             We should select human if the human is angry or requests a human.
@@ -171,6 +171,23 @@ def send_message(chat_id):
         Thread(target=bot_reply, args=(chat,)).start()
 
     return jsonify(message), 201
+
+@app.route('/chats/<chat_id>/ai', methods=['POST', 'GET'])
+def toggle_ai(chat_id):
+    chat = chats.get(chat_id)
+    if not chat:
+        return jsonify({'error': 'Chat not found'}), 404
+
+    if request.method == 'GET':
+        return jsonify({'bot_allowed': chat.get('bot_allowed', True)})
+
+    # Toggle bot_allowed based on request
+    enabled = request.json.get('enabled')
+    if enabled is None:
+        return jsonify({'error': 'Missing enabled parameter'}), 400
+    chat['bot_allowed'] = enabled
+    return jsonify({'bot_allowed': chat['bot_allowed']})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
