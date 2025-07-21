@@ -44,6 +44,7 @@ class ResetPassword(BaseTool):
     args_schema: Type[BaseModel] = ResetPasswordInput
 
     def _run(self, email: str) -> str:
+        logger.info(f"ResetPassword called with email: {email}")
         if email == "test@example.com":
             response = "Password reset link sent to {}".format(email)
             logger.info(f"ResetPassword: {response}")
@@ -65,16 +66,18 @@ class GetOrderDetails(BaseTool):
     args_schema: Type[BaseModel] = GetOrderDetailsInput
 
     def _run(self, order_number: str, email: str) -> str:
+        logger.info(f"GetOrderDetails - called with order_number: {order_number}, email: {email}")
+
         if order_number == '1' and email == "test@example.com":
             response = "Order 1: Item A, Quantity: 2, Status: Shipped, Shipped: 2025-01-01"
-            logger.info(f"GetOrderDetails: {response}")
+            logger.info(f"GetOrderDetails - {response}")
             return response
         if order_number == '2' and email == "test@example.com":
             response = "Order 2: Item B, Quantity: 1, Status: Lost, Shipped: 2024-01-01"
-            logger.info(f"GetOrderDetails: {response}")
+            logger.info(f"GetOrderDetails - {response}")
             return response
         response = "No order found for the provided details."
-        logger.info(f"GetOrderDetails: {response}")
+        logger.info(f"GetOrderDetails - {response}")
         return response
 
 get_order_details = GetOrderDetails()
