@@ -107,7 +107,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                     ? "Customer"
                     : msg.from}
                 </div>
-                {msg.source === "bot" && (
+                {msg.source === "bot" && side === "right" && (
                   <div style={{ display: "flex", gap: 8 }}>
                     <span className="svg-square">
                       <svg
