@@ -43,10 +43,10 @@ class GetOrderDetails(BaseTool):
 
     def _run(self, order_number: str, email: str) -> str:
         if order_number == '1' and email == "test@example.com":
-            response = "Order 1: Item A, Quantity: 2, Status: Shipped"
+            response = "Order 1: Item A, Quantity: 2, Status: Shipped, Shipped: 2025-01-01"
             return response
-        if order_number == '2' and email == "test2@example.com":
-            response = "Order 2: Item B, Quantity: 1, Status: Lost"
+        if order_number == '2' and email == "test@example.com":
+            response = "Order 2: Item B, Quantity: 1, Status: Lost, Shipped: 2024-01-01"
             return response
         return "No order found for the provided details."
 

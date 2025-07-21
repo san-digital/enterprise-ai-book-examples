@@ -1,183 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
-
-interface Message {
-  text: string;
-  source: "left" | "right" | "bot" | "meta";
-  from: string;
-  time: string;
-}
-
-interface Chat {
-  id: string;
-  name: string;
-  messages: Message[];
-  hasNewLeftMessage?: boolean;
-  bot_allowed?: boolean; // add this property for AI state
-}
-
-interface ChatWindowProps {
-  title: string;
-  messages: Message[];
-  input: string;
-  setInput: React.Dispatch<React.SetStateAction<string>>;
-  sendMessage: () => void;
-  showBack?: boolean;
-  onBack?: () => void;
-  showNewChat?: boolean;
-  onNewChat?: () => void;
-  side: "left" | "right";
-  aiEnabled?: boolean;
-  toggleAi?: () => void;
-}
-
-const ChatWindow: React.FC<ChatWindowProps> = ({
-  title,
-  messages,
-  input,
-  setInput,
-  sendMessage,
-  showBack,
-  onBack,
-  showNewChat,
-  onNewChat,
-  side,
-  aiEnabled,
-  toggleAi,
-}) => {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
-
-  return (
-    <div className="chat-window">
-      <div
-        style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}
-      >
-        {showBack && (
-          <button
-            className="back-btn"
-            onClick={onBack}
-            style={{ marginRight: "1rem" }}
-          >
-            Back
-          </button>
-        )}
-        <h2 style={{ margin: 0 }}>{title}</h2>
-        {showNewChat && (
-          <button
-            className="new-chat-btn"
-            onClick={onNewChat}
-            style={{ marginLeft: "auto" }}
-          >
-            New Chat
-          </button>
-        )}
-      </div>
-      {/* Toolbar for right chat window */}
-      {side === "right" && (
-        <div
-          className="chat-toolbar"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-            gap: "1rem",
-          }}
-        >
-          <span>
-            AI:{" "}
-            <b style={{ color: aiEnabled ? "green" : "red" }}>
-              {aiEnabled ? "On" : "Off"}
-            </b>
-          </span>
-          <button onClick={toggleAi} style={{ padding: "0.3rem 0.8rem" }}>
-            {aiEnabled ? "Disable AI" : "Enable AI"}
-          </button>
-        </div>
-      )}
-      <div className="chat-messages">
-        {messages.map((msg, idx) => {
-          if (msg.source === "meta") {
-            return <div>{msg.text}</div>;
-          }
-          return (
-            <div
-              key={idx}
-              className={`chat-message${
-                msg.source !== side ? " chat-message-grey" : ""
-              }`}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
-              <div>
-                <div className="chat-sender-label">{msg.from}</div>
-                {msg.text}
-              </div>
-              <div className="chat-time-label">{msg.time}</div>
-            </div>
-          );
-        })}
-        <div ref={messagesEndRef} />
-      </div>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        placeholder="Type a message..."
-      />
-      <button onClick={sendMessage}>Send</button>
-    </div>
-  );
-};
-
-interface ChatTableProps {
-  chats: Chat[];
-  onSelectChat: (id: string) => void | Promise<void>;
-}
-
-const ChatTable: React.FC<ChatTableProps> = ({ chats, onSelectChat }) => (
-  <div className="chat-table-window">
-    <h2>Chats</h2>
-    <table className="chat-table">
-      <thead>
-        <tr>
-          <th>Chat Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        {chats.map((chat) => {
-          // Dot color logic
-          let dotColor = "#44cc44"; // green by default (no new message)
-          if (chat.hasNewLeftMessage) dotColor = "#ff3b3b"; // red if new message
-          if (chat.bot_allowed === true) dotColor = "#2286ff"; // blue if AI enabled
-          return (
-            <tr
-              key={chat.id}
-              onClick={() => onSelectChat(chat.id)}
-              style={{ cursor: "pointer" }}
-            >
-              <td style={{ position: "relative" }}>
-                {chat.name}
-                <span
-                  className="new-message-dot"
-                  style={{ background: dotColor }}
-                ></span>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  </div>
-);
+import ChatWindow from "./components/ChatWindow";
+import { Chat } from "./models";
+import ChatTable from "./components/ChatTable";
 
 const BACKEND_URL = "http://localhost:5000";
 
@@ -336,8 +161,20 @@ const App: React.FC = () => {
   const rightMessages = rightChat ? rightChat.messages : [];
 
   return (
-    <div className="app-container">
+    <div
+      className="app-container"
+      style={{ display: "flex", justifyContent: "center", gap: 0 }}
+    >
       <div className="left-chat-section">
+        <h2
+          style={{
+            textAlign: "center",
+            color: "#228866",
+            marginBottom: "0.5rem",
+          }}
+        >
+          Customer
+        </h2>
         <div
           style={{
             display: "flex",
@@ -362,7 +199,27 @@ const App: React.FC = () => {
           />
         )}
       </div>
+      <div
+        style={{
+          width: "2px",
+          background: "#fff",
+          margin: "0 2rem",
+          minHeight: "600px",
+          alignSelf: "stretch",
+          borderRadius: "2px",
+          boxShadow: "0 0 4px #eee",
+        }}
+      ></div>
       <div className="right-chat-section">
+        <h2
+          style={{
+            textAlign: "center",
+            color: "#228866",
+            marginBottom: "0.5rem",
+          }}
+        >
+          Support Team
+        </h2>
         {rightChatId === null ? (
           <ChatTable chats={chats} onSelectChat={handleSelectChatRight} />
         ) : (
