@@ -11,6 +11,7 @@ dependencies:
   - langchain
   - langchain-community
   - langchain-openai
+  - faiss-cpu
   - pip
   - pip:
       - crewai
