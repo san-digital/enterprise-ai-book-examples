@@ -1,71 +1,45 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { appendFileSync } from "fs";
+import { resolve } from "path";
+
+/**
+ * Appends a JSON object to a .jsonl file.
+ * Each call writes a new line containing a stringified JSON object.
+ *
+ * @param filePath - Path to the .jsonl file
+ * @param data - The JSON object to append
+ */
+function appendToJsonlFile(filePath: string, data: any) {
+  const fullPath = resolve(filePath);
+  const line = "\n" + JSON.stringify(data);
+
+  try {
+    appendFileSync(fullPath, line, { encoding: "utf8" });
+    console.log(`✅ Appended to ${fullPath}`);
+  } catch (error) {
+    console.error(`❌ Failed to write to file: ${error}`);
+  }
+}
+
+
 export async function POST(req: Request) {
   try {
-    const { situation, originalRecommendation, correctedRecommendation, timestamp } = await req.json()
+    const { situation, correctedRecommendation } = await req.json()
 
     // Validate required fields
-    if (!situation || !originalRecommendation || !correctedRecommendation) {
+    if (!situation || !correctedRecommendation) {
       return Response.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // Format the data for fine-tuning
-    const correctionData = {
-      situation: situation.trim(),
-      originalRecommendation: originalRecommendation.trim(),
-      correctedRecommendation: correctedRecommendation.trim(),
-      timestamp: timestamp || new Date().toISOString(),
-      // Format suitable for OpenAI fine-tuning
-      fineTuningFormat: {
-        messages: [
-          {
-            role: "system",
-            content: `You are a biscuit expert who gives perfect biscuit recommendations based on situations. 
-            
-            Rules:
-            - Always respond with exactly ONE biscuit recommendation
-            - Be specific about the biscuit type (e.g., "Chocolate Digestives", "Jammy Dodgers", "Rich Tea", "Hobnobs", etc.)
-            - Give a brief, friendly explanation (1-2 sentences) of why this biscuit is perfect for their situation
-            - Keep your response under 50 words
-            - Be warm and enthusiastic about biscuits
-            - Consider factors like mood, time of day, activities, and preferences mentioned`,
-          },
-          {
-            role: "user",
-            content: `Based on this situation, recommend the perfect biscuit: "${situation.trim()}"`,
-          },
-          {
-            role: "assistant",
-            content: correctedRecommendation.trim(),
-          },
-        ],
-      },
+    const promptMessage = {
+      "messages": [
+        { "role": "system", "content": "You are a biscuit selector. Return only the name of one biscuit appropriate for the user's situation." },
+        { "role": "user", "content": situation },
+        { "role": "assistant", "content": correctedRecommendation }]
     }
 
-    // Log the correction data (in a real app, you'd save this to a database)
-    console.log("=== BISCUIT RECOMMENDATION CORRECTION ===")
-    console.log("Timestamp:", correctionData.timestamp)
-    console.log("Situation:", correctionData.situation)
-    console.log("Original AI Response:", correctionData.originalRecommendation)
-    console.log("User Correction:", correctionData.correctedRecommendation)
-    console.log("Fine-tuning Format:", JSON.stringify(correctionData.fineTuningFormat, null, 2))
-    console.log("==========================================")
-
-    // In a production app, you would:
-    // 1. Save to a database (e.g., Supabase, Neon, etc.)
-    // 2. Potentially add to a fine-tuning dataset
-    // 3. Track correction patterns for model improvement
-
-    // Example database save (uncomment and adapt for your database):
-    /*
-    await db.corrections.create({
-      data: {
-        situation: correctionData.situation,
-        originalRecommendation: correctionData.originalRecommendation,
-        correctedRecommendation: correctionData.correctedRecommendation,
-        timestamp: correctionData.timestamp,
-        fineTuningData: correctionData.fineTuningFormat
-      }
-    })
-    */
+    appendToJsonlFile("../resources/biscuit_selector.jsonl", promptMessage);
 
     return Response.json({
       success: true,

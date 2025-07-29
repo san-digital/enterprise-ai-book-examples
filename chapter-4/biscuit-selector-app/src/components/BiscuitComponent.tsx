@@ -2,25 +2,39 @@
 import { useState } from "react";
 import BiscuitForm from "./BiscuitForm";
 import {
-    RecommendationProvider,
-    useRecommendations,
+  RecommendationProvider,
+  useRecommendations,
 } from "./hooks/useRecommendations";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "./ui/card";
+
+import { Check, CheckCircle, LoaderIcon, ThumbsUp } from "lucide-react";
+import { usePostCorrection } from "./hooks/useAddCorrection";
+import { Button } from "./ui/button";
 
 const BiscuitComponent = () => {
   const { base, fineTuned, getRecommendations } = useRecommendations();
   const [recommendation, setRecommendation] = useState("");
+  const [cachedSituation, setCachedSituation] = useState("");
+  const [preferenceUpdated, setPrederenceUpdated] = useState<
+    "fine-tuned" | "base" | "customer" | undefined
+  >();
+
+  const postCorrection = usePostCorrection();
 
   const getBiscuitRecommendation = async (situation: string) => {
     if (!situation.trim()) return;
-    setRecommendation(recommendation);
 
+    setCachedSituation(situation);
+    setPrederenceUpdated(undefined);
+    postCorrection.reset();
+
+    setRecommendation(recommendation);
     getRecommendations(situation);
   };
 
@@ -62,6 +76,34 @@ const BiscuitComponent = () => {
                   <p className="text-lg text-gray-800 text-center  font-medium leading-relaxed">
                     {base.recommendation}
                   </p>
+                  <div className="flex justify-center my-4">
+                    {(preferenceUpdated === undefined ||
+                      preferenceUpdated === "base") && (
+                      <Button
+                        variant="outline"
+                        disabled={
+                          postCorrection.loading ||
+                          preferenceUpdated !== undefined
+                        }
+                        onClick={async () => {
+                          await postCorrection.postCorrection({
+                            situation: cachedSituation,
+                            correctedRecommendation: fineTuned.recommendation,
+                          });
+                          setPrederenceUpdated("base");
+                        }}
+                      >
+                        I prefer this response{" "}
+                        {postCorrection.loading ? (
+                          <LoaderIcon />
+                        ) : preferenceUpdated === "base" ? (
+                          <CheckCircle />
+                        ) : (
+                          <ThumbsUp />
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </>
@@ -71,7 +113,7 @@ const BiscuitComponent = () => {
         <div className="w-full">
           {fineTuned.recommendation && (
             <>
-              <p className="text-center">Fine Tuned Mode</p>
+              <p className="text-center">Fine Tuned Model</p>
 
               <Card className="shadow-lg border-amber-200 bg-amber-50">
                 <CardHeader>
@@ -85,6 +127,34 @@ const BiscuitComponent = () => {
                   <p className="text-lg text-center text-gray-800 font-medium leading-relaxed">
                     {fineTuned.recommendation}
                   </p>
+                  <div className="flex justify-center my-4">
+                    {(preferenceUpdated === undefined ||
+                      preferenceUpdated === "fine-tuned") && (
+                      <Button
+                        variant="outline"
+                        disabled={
+                          postCorrection.loading ||
+                          preferenceUpdated !== undefined
+                        }
+                        onClick={async () => {
+                          await postCorrection.postCorrection({
+                            situation: cachedSituation,
+                            correctedRecommendation: fineTuned.recommendation,
+                          });
+                          setPrederenceUpdated("fine-tuned");
+                        }}
+                      >
+                        I prefer this response{" "}
+                        {postCorrection.loading ? (
+                          <LoaderIcon />
+                        ) : preferenceUpdated === "fine-tuned" ? (
+                          <CheckCircle />
+                        ) : (
+                          <ThumbsUp />
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </>
