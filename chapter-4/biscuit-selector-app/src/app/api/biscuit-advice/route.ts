@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "Situation is required" }, { status: 400 })
     }
 
-    let model = "gpt-4o";
+    let model = "gpt-4.1-mini";
     if (type === "fine-tuned" && fs.existsSync("../resources/model.json")) {
       const fileString = fs.readFileSync("../resources/model.json").toString();
       console.log(fileString);
