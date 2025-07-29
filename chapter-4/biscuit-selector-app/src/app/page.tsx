@@ -15,9 +15,24 @@ export default function Home() {
           <p className="text-gray-600 text-lg">
             Describe your situation and get the perfect biscuit recommendation!
           </p>
+          <p className="text-gray-600 text-sm">
+            Choose the answer you prefer to improve the model over time!
+            Recommendations are stored in training file{" "}
+          </p>
+          <p className="text-gray-600 text-sm">
+            <code>../resources/biscuit_selector.jsonl</code>
+          </p>
+          <p className="text-gray-600 text-sm">
+            {" "}
+            and can be used for fine tuning in the python notebook
+          </p>
+          <p className="text-gray-600 text-sm">
+            {" "}
+            <code>../../Chap4-part2-finetuning.ipnyb</code>
+          </p>
         </div>
 
-        <BiscuitComponent/>
+        <BiscuitComponent />
       </main>
     </div>
   );

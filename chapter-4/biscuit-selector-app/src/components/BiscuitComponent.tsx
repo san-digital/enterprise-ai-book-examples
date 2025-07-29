@@ -162,17 +162,19 @@ const BiscuitComponent = () => {
           )}
         </div>
       </div>
-      <CustomAnswerForm
-        isLoading={postCorrection.loading}
-        submitted={preferenceUpdated === "custom"}
-        onSubmit={async (customAnswer) => {
-          await postCorrection.postCorrection({
-            situation: cachedSituation,
-            correctedRecommendation: customAnswer,
-          });
-          setPrederenceUpdated("custom");
-        }}
-      />
+      {cachedSituation && (
+        <CustomAnswerForm
+          isLoading={postCorrection.loading}
+          submitted={preferenceUpdated === "custom"}
+          onSubmit={async (customAnswer) => {
+            await postCorrection.postCorrection({
+              situation: cachedSituation,
+              correctedRecommendation: customAnswer,
+            });
+            setPrederenceUpdated("custom");
+          }}
+        />
+      )}
     </>
   );
 };
