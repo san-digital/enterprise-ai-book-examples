@@ -16,13 +16,14 @@ import {
 import { Check, CheckCircle, LoaderIcon, ThumbsUp } from "lucide-react";
 import { usePostCorrection } from "./hooks/useAddCorrection";
 import { Button } from "./ui/button";
+import CustomAnswerForm from "./CustomAnswerForm";
 
 const BiscuitComponent = () => {
   const { base, fineTuned, getRecommendations } = useRecommendations();
   const [recommendation, setRecommendation] = useState("");
   const [cachedSituation, setCachedSituation] = useState("");
   const [preferenceUpdated, setPrederenceUpdated] = useState<
-    "fine-tuned" | "base" | "customer" | undefined
+    "fine-tuned" | "base" | "custom" | undefined
   >();
 
   const postCorrection = usePostCorrection();
@@ -161,6 +162,17 @@ const BiscuitComponent = () => {
           )}
         </div>
       </div>
+      <CustomAnswerForm
+        isLoading={postCorrection.loading}
+        submitted={preferenceUpdated === "custom"}
+        onSubmit={async (customAnswer) => {
+          await postCorrection.postCorrection({
+            situation: cachedSituation,
+            correctedRecommendation: customAnswer,
+          });
+          setPrederenceUpdated("custom");
+        }}
+      />
     </>
   );
 };
