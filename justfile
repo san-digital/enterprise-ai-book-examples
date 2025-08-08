@@ -1,6 +1,6 @@
 init:
     read -p "Enter your OpenAI API key: " key && echo "OPENAI_API_KEY=$key" > .env && echo "OPENAI_API_KEY=$key" > chapter-4-biscuit-selector/biscuit-selector-app/.env
-
+    just create-env
 
 create-env:
     conda env create -f environment.yml
@@ -16,4 +16,3 @@ check-env:
 
 notebook:
     conda run -n enterprise-ai jupyter lab
-
