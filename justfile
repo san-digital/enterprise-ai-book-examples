@@ -1,5 +1,5 @@
 init:
-    read -p "Enter your OpenAI API key: " key && echo "OPENAI_API_KEY=$key" > .env && echo "OPENAI_API_KEY=$key" > chapter-4/biscuit-selector-app/.env
+    read -p "Enter your OpenAI API key: " key && echo "OPENAI_API_KEY=$key" > .env && echo "OPENAI_API_KEY=$key" > chapter-4-biscuit-selector/biscuit-selector-app/.env
 
 
 create-env:
