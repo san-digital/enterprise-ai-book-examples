@@ -8,10 +8,13 @@ dependencies:
   - openai
   - tiktoken
   - python-dotenv
-  - langchain
-  - langchain-community
-  - langchain-openai
+  - pydantic>=2.7,<3
   - faiss-cpu
+  - langchain==0.3.*
+  - langchain-core==0.3.*
+  - langchain-community==0.3.*
+  - langchain-openai==0.3.30
+  - langgraph==0.3.0
   - pip
   - pip:
       - crewai
